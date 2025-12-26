@@ -1,0 +1,174 @@
+######################
+🧵 What is a Thread?
+######################
+➤ A thread is the smallest unit of execution within a process
+➤ It represents an independent path of execution inside a program
+➤ Multiple threads can run concurrently within the same process
+
+⚙️ Thread vs Process (Core Idea)
+***********************************
+➤ A process is an independent program in execution
+➤ A thread is a lightweight sub-task of a process
+➤ All threads of a process share the same memory (heap)
+
+🧠 What Does a Thread Have?
+******************************
+➤ Thread ID – uniquely identifies a thread
+➤ Program Counter – keeps track of current instruction
+➤ Stack – stores local variables & method calls
+➤ Thread state – new, runnable, running, blocked, etc.
+
+➤ What is Shared Among Threads?
+➤ Heap memory
+➤ Static variables
+➤ Open files & resources
+
+🚀 Why Threads Are Called “Lightweight”?
+********************************************
+➤ Creating a thread is faster than creating a process
+➤ Context switching between threads is cheaper
+➤ Threads use less memory compared to processes
+
+🌍 Real-World Example
+***********************
+➤ In a browser:
+➤ One thread loads a webpage
+➤ Another thread plays a video
+➤ Another thread handles user input
+
+📌 Advantages of Using Threads
+********************************
+➤ Better CPU utilization
+➤ Improved application responsiveness
+➤ Enables parallel execution on multi-core systems
+
+⚠️ Challenges with Threads (Interview Important)
+***************************************************
+➤ Race condition due to shared memory
+➤ Deadlock if threads wait indefinitely
+➤ Complex debugging
+
+🎯 Interview One-Liner (Must Remember)
+*****************************************
+➤ A thread is the smallest unit of execution that runs independently within a process and shares the process memory.
+
+#############################################
+🧵 Different Ways to Create Threads in Java
+#############################################
+In Java, threads can be created in multiple ways, but interviewers mainly expect 4 standard approaches.
+
+🧩 1. Extending Thread Class
+*******************************
+➤ Create a class that extends Thread
+➤ Override the run() method
+➤ Call start() to begin execution
+
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start(); // creates new thread & calls run()
+    }
+}
+
+➤ Key Points
+➤ run() contains the task
+➤ start() creates a new call stack
+➤ Direct call to run() → no new thread
+
+➤ Limitations (Interview Trap)
+➤ Java does not support multiple inheritance
+➤ Cannot extend any other class
+
+🧩 2. Implementing Runnable Interface ⭐ (Most Preferred)
+***********************************************************
+➤ Create a class that implements Runnable
+➤ Override run() method
+➤ Pass Runnable object to Thread constructor
+
+class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new MyRunnable());
+        t1.start();
+    }
+}
+
+➤ Why This is Better Than Extending Thread?
+➤ Supports multiple inheritance
+➤ Separates task logic from thread management
+➤ Better object-oriented design
+
+➤ Interview Verdict
+➤ ⭐ Best approach for most cases
+
+🧩 3. Using Callable Interface (With ExecutorService)
+******************************************************
+➤ Callable is used when:
+➤ Thread needs to return a value
+➤ Thread may throw checked exception
+
+Callable<Integer> task = () -> {
+    return 10;
+};
+
+ExecutorService service = Executors.newSingleThreadExecutor();
+Future<Integer> future = service.submit(task);
+
+System.out.println(future.get());
+service.shutdown();
+
+➤ Key Differences from Runnable
+➤ Callable → returns result
+➤ Runnable → returns nothing (void)
+➤ Callable → can throw checked exceptions
+
+🧩 4. Using Executor Framework (Modern Approach) ⭐⭐⭐
+*********************************************************
+➤ Java 5 introduced Executor Framework
+➤ Thread creation & management handled by framework
+➤ Uses thread pools
+
+ExecutorService executor = Executors.newFixedThreadPool(2);
+
+executor.execute(() -> {
+    System.out.println("Thread executed by executor");
+});
+
+executor.shutdown();
+
+➤ Why This Is Industry Standard?
+➤ Reuses threads (better performance)
+➤ Controls number of threads
+➤ Prevents resource exhaustion
+
+🧠 Summary Table (Interview Gold)
+************************************
+########################################################################
+| Way                | Returns Value | Preferred | Notes               |
+| ------------------ | ------------- | --------- | ------------------- |
+| Extend Thread      | ❌             | ❌      | Poor design         |
+| Implement Runnable | ❌             | ✅      | Best basic approach |
+| Callable           | ✅             | ✅      | When result needed  |
+| Executor Framework | ✅             | ⭐⭐⭐ | Production ready    |
+########################################################################
+
+🎯 Interview One-Liner
+************************
+➤ Threads in Java can be created using Thread class, Runnable interface, Callable interface, and Executor framework.
+
+⚠️ Common Interview Traps
+***************************
+➤ Calling run() instead of start()
+➤ Creating too many threads manually
+➤ Ignoring thread pool concept

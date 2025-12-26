@@ -1,0 +1,115 @@
+######################
+❄️ What is Thread ?
+######################
+➤ Thread is an independent path of execution within a same program.
+➤ There are 3 ways to create a thread 
+1. Extends Thread class 
+2. Implementing Runnable Interface
+
+➤ start() method is responsible for creating the independent path of execution.
+➤ The independent path of execution starts from the run() method.
+
+##########################
+❄️ Ways to create Thread 
+##########################
+➤ There are 3 ways to create a thread 
+1. By extending Thread class 
+2. By implementing runnable interface 
+3. Implementing callable interface 
+
+👉 Extending Thread class 
+***************************
+➤ When we extend Thread class it will be calling the no args constructor of the Thread class from there we are getting the thread-ThreadNumber 
+➤ So we are getting the thread number from there.
+public Thread(){
+    this(null, null, "Thread-"+nextThreadNum(), 0);
+}
+// The nextThreadNum() method is just incrementing the count of the threads and returning the thread number.
+➤ In the Thread class there is a method called start() and this method is responsible to create the independent path of execution . So when we write t1.start() this will create the independent path of execution and start the exection of that from the run() method.
+➤ So the starting point of every thread is run() method so we need to override it according to our need. If we dont override it then it will go to the run() of the thread class and run whatever is written inside the run() of Thread class.
+➤ Calling the start() is not same as calling the run()
+Eg: t1.start(); //This will create an independent path of execution and run the run().
+t1.run(); //This will not create an independent path of execution will directly call the run() and execute it.
+if we call the run() then it will not create the independent path of execution it will run the normally.
+➤ If you want to keep the name for your thread then there are two ways to do it :
+
+1. Using the constructor and passing name of thread while creating the object .
+Eg: ThreadExample t1 = new ThreadExample("First Thread");
+
+2. Using the setName() method 
+Eg: t1.setName("asdf");
+➤ We need to call the setName() before calling the start() always , it will not have any impact if we call it after the start() method. 
+
+👉 By implementing Runnable Interface 
+****************************************
+➤ Thread class internally implements the Runnable interface.
+➤ The Runnable interface has only one abstract method run(). Which is overriden by the Thread class because it implements the runnable interface 
+➤ So when we create thread using the runnable interface then we also need to override the run() method .
+➤ Now we need to call the start() of the thread class and since it is an instance method we need to create thread class object first then only we can call the start() so how do we do this when we are creating a thread by implementing Runnable interface?? 
+So we have a constructor in the Thread class which takes Runnable as parameter using this we will create the object of the thread class.
+➤ We will create the object of the class that implemented Runnable interface and then we will pass it to the Thread class constructor this will create a Thread class object for us.
+
+Example: 
+----------
+public class ThreadExampleUsingRunnable implements Runnable{
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		System.out.println("Hi");
+	}
+	
+	public static void main(String[] args) {
+		ThreadExampleUsingRunnable tr = new ThreadExampleUsingRunnable();
+		Thread t = new Thread(tr);
+		
+		Thread t1 = new Thread(new ThreadExampleUsingRunnable());
+		
+		t.start();
+		t1.start();
+	}
+
+}
+
+##################
+❄️ Thread States 
+##################
+➤ There are differnt states in threads 
+1. New : A thread can be called to be in new state only when the thread object is created start() is not called yet.
+
+👉 NOTE: 
+----------
+➤ How many threads will run at a time will depend upon the operating system or our system configuration its not like that we have created 1000 threads and all threads will run at the same time it depends on the system.
+
+2. Runnable : When we start the thread then we can say all the threads are in the runnable pool from there operating system will take some of the thread and will start running them .
+
+3. Running : The thread which is executing the run() is said to be in the running state .
+
+4. Dead : After the execution of the run() we can say that the thread is in the dead state.
+
+5. Wait 
+6. Sleep
+7. Blocked 
+
+📅 Can we use the same thread object multiple times ?
+#######################################################
+➤ So the basic idea here is that if a task takes 1 hr to be completed in a single thread and we want to reduce the execution time then we can take 20 threads and complete the same task in 20 min but the problem here is that we are creating 20 new thread objects which will occupy a lot of memory so to solve this problem.
+➤ The thread object is free once it complete the execution of the run() so why dont we reuse that to solve this problem 
+Eg: 
+ThreadExample t1 = new ThreadExample("First Thread");
+t1.start(); 
+t1.start(); 
+// But when we do this it will give us the illegalThreadState exception.
+➤ So we are getting this execption because t1 has not yet finished the run() execution and how jvm knows this inside the start() there is a variable threadStatus which is checked everytime start() is called and it tells us about the status of the thread.
+➤ So whenever we try to use a thread whose state is dead it will give us illegalThreadState exception. 
+➤ So this means that we cant reuse the thread again .
+
+➤ So the disadvantage of the thread is we cant reuse the thread object after the completion of run() method and in order to overcome this we are going to use thread pool.
+➤ In normal thread we can't reuse the thread but using thread pool we can reuse the thread.
+
+➤ At any point of time which thread is executing that is not in our hand that totally depends on the operating system. In order to get the thread name that is executing currently there is a method in the Thread class currentThread() it is a native method (means its implementation is present in the operating system). It's return type is Thread.
+Eg: Thread t = Thread.currentThread(); // will return the current thread reference that is executing.
+t.getName(); // will give the name of the thread.
+
+=> We can also do it like this 
+System.out.println(Thread.currentThread().getName());
