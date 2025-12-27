@@ -172,3 +172,106 @@ executor.shutdown();
 ➤ Calling run() instead of start()
 ➤ Creating too many threads manually
 ➤ Ignoring thread pool concept
+
+##########################
+🧵 Thread States in Java
+##########################
+In Java, a thread can exist in 6 predefined states, represented by the Thread.State enum.
+
+⚙️ 1. NEW
+***********
+➤ Thread is created but not started
+➤ start() method is not yet called
+
+Thread t = new Thread();
+System.out.println(t.getState()); // NEW
+
+➤ Important Point
+➤ No system resources are allocated yet
+
+🚀 2. RUNNABLE
+*****************
+➤ Thread is ready to run and waiting for CPU
+➤ Includes both:
+➤ ➤ Ready state
+➤ ➤ Running state
+
+t.start();
+System.out.println(t.getState()); // RUNNABLE
+
+➤ Interview Trap
+➤ Java does not have separate READY and RUNNING states
+
+🔒 3. BLOCKED
+****************
+➤ Thread is waiting to acquire a monitor lock
+➤ Occurs when:
+➤ ➤ Thread tries to enter a synchronized block
+➤ ➤ Lock is held by another thread
+
+synchronized(obj) {
+    // if lock is unavailable → BLOCKED
+}
+
+⏳ 4. WAITING
+***************
+➤ Thread waits indefinitely for another thread’s action
+➤ Entered by calling:
+➤ ➤ wait()
+➤ ➤ join() (without timeout)
+➤ ➤ LockSupport.park()
+
+obj.wait();     // WAITING
+t.join();       // WAITING
+
+➤ Key Point
+➤ Thread will resume only after notification
+
+⏱️ 5. TIMED_WAITING
+*********************
+➤ Thread waits for a specified time period
+➤ Entered by calling:
+➤ ➤ sleep(time)
+➤ ➤ wait(time)
+➤ ➤ join(time)
+
+Thread.sleep(1000); // TIMED_WAITING
+
+☠️ 6. TERMINATED (DEAD)
+*************************
+➤ Thread has completed execution
+➤ run() method has finished
+➤ Thread cannot be restarted
+
+// After run() ends
+System.out.println(t.getState()); // TERMINATED
+
+🔄 Thread State Lifecycle (Flow)
+=================================
+➤ NEW → RUNNABLE
+➤ RUNNABLE → BLOCKED / WAITING / TIMED_WAITING
+➤ WAITING / TIMED_WAITING → RUNNABLE
+➤ RUNNABLE → TERMINATED
+
+📌 Quick Comparison Table
+***************************
+########################################
+| State         | Meaning              |
+| ------------- | -------------------- |
+| NEW           | Thread created       |
+| RUNNABLE      | Ready or running     |
+| BLOCKED       | Waiting for lock     |
+| WAITING       | Waiting indefinitely |
+| TIMED_WAITING | Waiting with time    |
+| TERMINATED    | Execution completed  |
+########################################
+
+⚠️ Interview Traps
+********************
+➤ sleep() → does not release lock
+➤ wait() → releases lock
+➤ BLOCKED ≠ WAITING
+
+🎯 Interview One-Liner
+***********************
+➤ Java thread lifecycle consists of six states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, and TERMINATED.

@@ -113,3 +113,22 @@ t.getName(); // will give the name of the thread.
 
 => We can also do it like this 
 System.out.println(Thread.currentThread().getName());
+
+####################
+❄️ Synchronization
+####################
+👉 What is the need for Synchronization in our application ?
+➤ Suppose there is a Bank class and we have an object of a Bank class now same object is performing withdraw and deposite at the same time this will cause the inconsistency in our data 
+Eg: If we have 7k present in our bank and we withdraw 3k and deposit 5k at the same time then there is a chance that we either get the update balance as 4k after withdrawal or 12k after deposit which is wrong the correct balance should be 8k so to achieve this we need to make sure that first one of the transcation is completed then only other transaction takes place and to achieve this we need the synchronization .
+
+➤ We can make a method synchronized by using keyword synchronized .
+➤ When we want to make some work inside a method synchronized then we will use synchronized block .
+
+#################
+❄️ Object Lock 
+#################
+➤ Suppose T1 thread is executing a synchronized method m1() using object a of class A and T2 thread is trying to execute the methd m2() using same object a of class A so it wont be able to execute m2() because the object a is already executing the m1() so it has acquired objectLocka so it wont be able to execute another method .
+➤ But if we create another object b then we will be able to execute the m2() because it has not acquired object lock so when it will execute m2() then it will acquire objectLockb.
+
+➤ If methods were not synchronized then we can execute both method using the same object at the same time.
+➤ So when we have instance method then object lock is acquired . Using object lock we make the instance data as Thread safe.
