@@ -131,4 +131,44 @@ Eg: If we have 7k present in our bank and we withdraw 3k and deposit 5k at the s
 ➤ But if we create another object b then we will be able to execute the m2() because it has not acquired object lock so when it will execute m2() then it will acquire objectLockb.
 
 ➤ If methods were not synchronized then we can execute both method using the same object at the same time.
-➤ So when we have instance method then object lock is acquired . Using object lock we make the instance data as Thread safe.
+➤ So when we have instance method then object lock is acquired . Using object lock we make the instance data as Thread safe. 
+
+➤ It is mechanism when we want to synchronize the non-static method or non static code block such that only one thread will be able to execute the code block on the given instance of the class 
+➤ In object lock if one thread acquires the lock on object then any other thread cant access any other synchronized methods on the same object but they can access non synchronized methods. 
+➤ So the synchronized methods in object lock are instance methods 
+➤ If the threads are working on different object of a class then lock acquires on different objects 
+
+#################
+❄️ Class Lock 
+#################
+➤ Whereas if we want to make the class level data means static methods thread safe then we should go for class lock 
+➤ In the above example if the synchronized methods are static methods then we don't need the object to call the static methods.
+➤ When synchronized methods are static methods , then the lock that acquires is class lock.
+➤ In class lock if one thread acquires the lock on class reference then any other thread cant access any other synchronized static methods on the same class reference until the first lock is released but they can access non synchronized static methods.
+
+######################################
+❄️ Difference between sleep and wait 
+######################################
+## sleep()
+------------
+➤ sleep() method is present in the thread class and it is a native static method.
+Thread.sleep(10000);
+➤ Whenever you are doing some transaction and some other resources are not responding then we use sleep() 
+➤ This is a static method present in Thread class 
+➤ Sleep accespts milli sec. Thread will sleep for specified time and after that starts the execution if system resource is not  busy. Whenever a thread is sleeping it will go to the runnable pool.
+➤ Sleep doesn't release the lock .
+➤ Sleep can be used with or without synchronized block.
+➤ THread is used to pause the thread exection for some time 
+
+## wait()
+----------
+➤ This is instance method present in Object class
+➤ Thread will be in waiting status unless untill notify or notify all is called 
+➤ Wait will release the lock 
+➤ Wait can be used only with synchronized block . If used in non synchronized block then it throws illegal monitor state exception.
+➤ Wait and notify or notify all are used for inter thread communication.
+
+## notify() / notifyAll() 
+--------------------------
+➤ Using this method we let the thread that went to wait know that now you can execute if we dont notify then it will end up waiting for infinite number of time.
+➤ So basically one thread has to talk to the other thread in order to tell it to come back to the execution and this is called as inter thread communication.
