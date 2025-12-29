@@ -172,3 +172,39 @@ Thread.sleep(10000);
 --------------------------
 ➤ Using this method we let the thread that went to wait know that now you can execute if we dont notify then it will end up waiting for infinite number of time.
 ➤ So basically one thread has to talk to the other thread in order to tell it to come back to the execution and this is called as inter thread communication.
+➤ notify() will notify only the single thread where as notifyAll() will notify all the threads that are waiting for that object.
+➤ So what it means is suppose there is a kartik object which has 3 threads and 2 threads enter waiting mode and there is another object abc which entered waiting mode now a thread which is using kartik object calls notifyAll() so this method will notify to all the kartik objects not the abc object.
+➤ Similarly when we use notify() then any one thread that is working on the same object will return back to the execution.
+
+#################################################################################################
+❄️ Why wait() notify() and notifyAll() is present in the Object class not in the Thread class ?
+#################################################################################################
+➤ Because they are used to control the behavior of threads that are accessing objects.
+➤ In java threads execute code in the context of an object. When a thread accesses an object, it may need to wait for another thread to release the object's lock. This is where the wait(), notify() and notifyAll() methods come into play. 
+➤ The wait(), notify() and notifyAll() methods allow threads to communicate and synchronize with each other when accessing shared objects. When a thread calls the wait() on an object, it releases the object's lock  and waits until another thread notifies it. When a thread calls the notify() method on an object, it wakes up one of the threads that are waiting on that objects monitor . When a thread calls the notifyAll() method on an object it wakes up all the threads that are waiting on that object's monitor. 
+➤ Since the wait(), notify() and notifyAll() methods are used to control the behaviour of thread that are accessing objects, it makes sense to include these methods in the object class rather than the thread class. This way these methods can be used with any object that needs to be accessed by multiple threads, regardless of whether those threads are executing in the context of the same or different threads.
+
+###################################
+❄️ What is drawback of Threads ? 
+###################################
+➤ The drawback of a thread is that once a thread is dead we cant reuse that thread and in order to overcome this drawback of the threads we will use thread pool .
+
+################
+❄️ Thread Pool 
+################
+➤ It is mainly for re purpose of threads which are already created because on normal thread if you call start after completion on run method system throws illegal state exception. 
+➤ In order to overcome the drawback of the thread the thread pool come in the java 1.5 
+➤ Executor framework is used to configure the thread pool. 
+➤ There are 4 thread pools : 
+1. Single Thread Pool : Only one thread will be created in this and it will complete all the task 
+
+2. Cached Thread Pool : You dont need to tell anything the schedular will start the thread if the thread is busy it will create one more thread like this it will keep on doing to complete the given task.
+➤ So if threads are free then it will reuse the thread but if they are busy it will create a new thread.
+
+3. Scheduled Thread Pool : It is a fixed thread pool but we can provide some delay.
+
+4. Fixed Thread Pool : Based on our CPU a formula is used to find the max no of thread that we can create using thread pool 
+maxPoolSize = processorCount * desiredThreadPool(Utilization) + overheadThreadCount. 
+➤ So in this we provide fixed no of thread lets say 4 then we will complete the give task using this 4 threads only.
+Ex: ExecutorService ex = Executors.newFixedThreadPool(3); //This will create fixed thread pool of 3 threads. 
+//ExecutorService is an interface....
