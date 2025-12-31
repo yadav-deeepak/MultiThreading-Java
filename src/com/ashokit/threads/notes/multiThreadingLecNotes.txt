@@ -251,7 +251,65 @@ public class MultiThreadingForInsurance {
 		 
 	}
 }
+➤ So here execute method will create an independent path of execution. 
 
+➤ So here the first thread after the execution of the run() method it will take the task from the queue.
+➤ It will complete the task and then remove it from the queue each time after completing the task the thread will check the queue.size() if it is 0 then the thread will understand that all the task are completed.
+➤ So here even after the completion of the program the thread is alive that is how it is managing to reuse the thread because once the thread is dead then we cant reuse it , it will give us illegal thread state exception.
+➤ So we need to shutdown the thread before the execution of the program is completed so we will do 
+ex.shutdown()
+➤ So in order to kill the thread we need to call the shutdown() method.
+
+➤ Internally it is using the LinkedBlockingQueue
 ➤ All the objects will go to the queue and wait for there turn when the execution of an object is completed then the thread will move to the next object.
 
-❄️ 
+################################################
+❄️ Drawback of the run() of Runnable Interface 
+################################################
+➤ The drawback of the run() is that we cant return anything from the run() method because its return type is void  in the runnable interface.
+➤ So we can say that the drawback of the Runnable interface is that whenever we are using run() we cant return anything from that run() method.
+➤ But if you want to return something from the run() then you should Implement Callable interface 
+➤ Callable inteface takes generic in which we can pass the return type that we want. It has an abstract method call() whose return type is the same as the type that we give to our callable interface.
+➤ So instead of impelementing Runnable Interface we will implement Callable Interface whenever we want to return something from run().
+➤ With callable Interface we need to use ex.submit() it takes callable object but ex.execute() takes runnable object.
+➤ submit() in the Executor framework can take both Runnable and Callable object whereas execute() can take only Runnable object.
+
+#####################
+❄️ Future Interface 
+#####################
+➤ In order to accept some data or object that comes in future whenever we do multithreading programming this interface is used.
+➤ Basically it is a placeholder that is use to capture or store the object that is coming in future.
+➤ So when we implement Callable interface then the call method will return some value after the thread is executed so to hold this method we need to store it in the the Future interface reference variable 
+➤ Because as the thread is keep on executing the task of the queue one by one we dont know which of value is for which task so to store this we need to use the Future interface.
+
+Ex: 
+String s = display();
+ExecutorService ex = Executors.newFixedThreadPool(3);
+List l = new ArrayList();
+for(int i=0; i<customerList.size(); i++){
+	TriggerEmailForPolicy t = new TriggerEmailForPolicy();
+	Future<Object> obj = ex.submit(t);
+	l.add(obj);
+	
+}
+
+########################################################
+❄️ How can we set the name in the Executor Framework ?
+########################################################
+➤ So we will pass the second parameter to the constructor of the Executors.newFixedThreadPool(0,)
+// The second argument is a ThreadFactory interface so we have to implement it and using this we will be able to give name to our threads.
+
+Ex: ExecutorService ex = Executors. newFixedThreadPool(2, new ThreadFactory(){
+	int counter = 0;
+	@Override 
+	public Thread newThread(Runnable r){
+		Thread t = new Thread(r);
+		t.setName("Thread"+counter++);
+		return t;
+	}
+});
+
+➤ So here instead of implementing the interface separately we have created an anonymous class and there we have overriden the method of the ThreadFactory interface. 
+
+
+❄️
