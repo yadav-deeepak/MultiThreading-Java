@@ -202,6 +202,45 @@ Thread.sleep(10000);
 ➤ So if threads are free then it will reuse the thread but if they are busy it will create a new thread.
 
 3. Scheduled Thread Pool : It is a fixed thread pool but we can provide some delay.
+➤ It is also a type of a fixed thread pool but the only change is that you can schedule some fixed time.
+➤ We use ScheduledTheadPool when we want to start a process after a certain time .
+Ex: String s = display();
+List<ScheduledFuture<Object>> l = new ArrayList();
+ScheduledExecutorService ex1 = Executors.newScheduledThreadPool(2);
+for(int i=0; i<customerList.Size(); i++){
+	TriggerEmailForPolicy t = new TriggerEmailForPolicy(customeList.get(i));
+	ScheduledFuture<Object> tx = ex1.schedule(t, 2, TimeUnit.MINUTES);
+	l.add(tx);
+}
+// So for above code two threads will be created and every thread will take 2 min after its created to execute.
+
+➤ So here the schedule() will create the delay and then start the execution.
+➤ In this schedule() method is responsible for creating the independent path of execution.
+➤ Thread will be created but the execution of thread will start after the 2 min for above code 
+
+👉 When we use schedule(t,2,TimeUnit.MINUTES;) then 
+➤ So what is happening is after completion of the work T1 will wait for 2 min and then it will take another work from the queue like this delay is working.
+
+👉 When we use scheduleAtFixedRate(t, 2, 10, TimeUnit.MINUTES);
+➤ So here what will happen is for the first time the thread will execute after the 2min then from the second time onwards it will take 2 + 10 = 12min to start the execution.
+
+➤ The return type of all the schedule() method is ScheduledFuture.
+
+🌟 Now to reuse the data that we have got from the run() 
+----------------------------------------------------------
+for(int i=0; i<l.size(); i++){
+	ScheduledFuture<Object> ob = l.get(i);
+	// ob.isDone(); //this method will give us the result as true if the thread execution has been done successfully else it will give false 
+	// So we will check first for each ob that the exection is done or not then only we will use get() 
+	if(l.get(i).isDone()){
+		try{
+			System.out.println(l.get(i).get());
+		}catch(InterruptedException | ExecutionException e){
+			e.printStackTrace();
+
+		}
+	}
+}
 
 4. Fixed Thread Pool : Based on our CPU a formula is used to find the max no of thread that we can create using thread pool 
 maxPoolSize = processorCount * desiredThreadPool(Utilization) + overheadThreadCount. 
@@ -290,7 +329,6 @@ for(int i=0; i<customerList.size(); i++){
 	TriggerEmailForPolicy t = new TriggerEmailForPolicy();
 	Future<Object> obj = ex.submit(t);
 	l.add(obj);
-	
 }
 
 ########################################################
@@ -312,4 +350,4 @@ Ex: ExecutorService ex = Executors. newFixedThreadPool(2, new ThreadFactory(){
 ➤ So here instead of implementing the interface separately we have created an anonymous class and there we have overriden the method of the ThreadFactory interface. 
 
 
-❄️
+❄️ 
