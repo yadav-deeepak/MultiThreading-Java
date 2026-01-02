@@ -118,6 +118,7 @@ System.out.println(Thread.currentThread().getName());
 ❄️ Synchronization
 ####################
 👉 What is the need for Synchronization in our application ?
+**************************************************************
 ➤ Suppose there is a Bank class and we have an object of a Bank class now same object is performing withdraw and deposite at the same time this will cause the inconsistency in our data 
 Eg: If we have 7k present in our bank and we withdraw 3k and deposit 5k at the same time then there is a chance that we either get the update balance as 4k after withdrawal or 12k after deposit which is wrong the correct balance should be 8k so to achieve this we need to make sure that first one of the transcation is completed then only other transaction takes place and to achieve this we need the synchronization .
 
@@ -127,7 +128,7 @@ Eg: If we have 7k present in our bank and we withdraw 3k and deposit 5k at the s
 #################
 ❄️ Object Lock 
 #################
-➤ Suppose T1 thread is executing a synchronized method m1() using object a of class A and T2 thread is trying to execute the methd m2() using same object a of class A so it wont be able to execute m2() because the object a is already executing the m1() so it has acquired objectLocka so it wont be able to execute another method .
+➤ Suppose T1 thread is executing a synchronized method m1() using object a of class A and T2 thread is trying to execute the method m2() using same object a of class A so it wont be able to execute m2() because the object a is already executing the m1() so it has acquired objectLocka so it wont be able to execute another method .
 ➤ But if we create another object b then we will be able to execute the m2() because it has not acquired object lock so when it will execute m2() then it will acquire objectLockb.
 
 ➤ If methods were not synchronized then we can execute both method using the same object at the same time.
@@ -349,5 +350,131 @@ Ex: ExecutorService ex = Executors. newFixedThreadPool(2, new ThreadFactory(){
 
 ➤ So here instead of implementing the interface separately we have created an anonymous class and there we have overriden the method of the ThreadFactory interface. 
 
+##################################################################################
+❄️  What is the difference between synchronized method and synchronized block ?
+##################################################################################
+➤ In synchronized method once the lock is acquired then it will be release only after the execution of that method.
+➤ In synchronized block the lock is acquire within the method an synchronized block is created and it can be released before the execution of the entire method.
 
-❄️ 
+Example: 
+	synchronized void display(SynchronizedExample d) {
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+	}
+	// When display method will start executing it will acquire the lock then no other thread will be able to execute display method 
+	// They will enter into the waiting mode.
+	
+	void display1(SynchronizedExample d) {
+		System.out.println("hi 1");
+	 	System.out.println("hi 2");
+	 	synchronized(d) {
+	 		System.out.println("hi3");
+	 		System.out.println("hi4");
+	 	}
+	}
+	// Here other thread can also start executing the display1() and they can execute the upper two lines then they have to wait for the lock to be release.
+
+👉 How to override the run() method of the Runnable interface using lambda?
+➤ So we can write the implemetation of the unimplemented method of an interface using lambdas we can do this for the interface with only one abstract method.
+➤ So we will create the reference variable of the interface and then we will implement the unimplemented method like give below.
+Ex: Runnable l1 = () -> {
+	s.display(s);
+}
+
+➤ We can also create thread object like this : 
+Thread t = new Thread(() -> s.display(s)); 
+
+🌟 Drawback of synchronized 
+*****************************
+➤ So suppose there are three threads T1 T2 and T3 , thread T1 has acquired the lock now both thread T2 and T3 will go into the waiting mode so now we suppose T2 is waiting for longer period of time so it should get the lock firt but we can say that for sure that it will get to acquire the lock first and execute run(). This is one of the drawback of threads . 
+➤ So basically there are two types of lock 
+1. Fair Lock : In this the thread that has been waiting for a longer period of time will acquire the lock first .
+
+2. Unfair Lock : In this we cant say that the thread that is waiting for longer period will get the lock first it may get or it might not get the lock for the longer period of time.
+
+➤ Let us take a scenario when we enter the display() it will acquire the lock and we want it to release the lock when we enter the display1() and when we execute the second line hi 2 is printed we want to relase the lock can this happen using the synchronized keyword ?
+
+synchronized void display(SynchronizedExample d) {
+	//Lock is acquired here 
+		display1(s);
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+	}
+	
+	void display1(SynchronizedExample d) {
+		System.out.println("hi 1");
+	 	System.out.println("hi 2");
+		//We want it to release the lock here.
+	 	synchronized(d) {
+	 		System.out.println("hi3");
+	 		System.out.println("hi4");
+	 	}
+	}
+➤ So no this is not possible using the synchronized keyword because synchronized keyword can be used to a method or within the method. We cant use synchronized keyword across the method.
+➤ So this is also one of the drawback
+
+👉 So in order to overcome this we will go for a Lock .
+
+###################
+❄️ Lock Interface 
+###################
+➤ In java we have a Lock interface present in java.util.concurrent.locks package. It has a lock() using which it will acquire the lock. And there is also an unlock() method which is used to relase the lock. 
+➤ To use this lock interface we need to provide the implementation for these two methods but we dont know the how to implement these two methods
+➤ So in java under the lock mechanism there is a class ReentrantLock .
+➤ So for Lock interface ReentrantLock class and ReentrantReadWriteLock provides the implementation for its unimplemented methods.
+➤ Whenever you want to use Lock interface create its object like this
+Lock l = new ReentrantLock();
+Lock l1 = new ReentrantReadWriteLock(); 
+
+Example: 
+synchronized void display(LockExample1 d) {
+		//CreateLock
+		l.lock();
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+		l.unlock();
+	}
+
+	public static void main(String[] args) {
+		LockExample1 l1= new LockExample1();
+		Thread t = new Thread(()-> l1.display(l1));
+		Thread t1 = new Thread(()-> l1.display(l1));
+		Thread t2= new Thread(()-> l1.display(l1));
+		Thread t3 = new Thread(()-> l1.display(l1));
+		
+		t.start();
+		t1.start();
+		t2.start();
+		t3.start();
+		
+	}
+➤ It will behave the same when one thread will acquire the lock the other threads have to wait.
+➤ Here by using this lock interface we can make some changes in our Reentrant class lock method to make sure that the thread which is waiting for longer period of time gets the lock first . So this solves one of the problem or drawback of the synchronized keyword.
+➤ So based on the waiting time of the thread we want to do acquire the lock. 
+➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlocck()
+➤ Using lock we are able to achieve or solve both the problems that we were facing in the synchronized block or method.
+
+👉 How we can do this?
+========================= 
+➤ We will pass true as an argument to the ReentrantLock it has a constructor. 
+public ReentrantLock(boolean fair){
+	sync = fair ? new FairSync() : new NonFairSync();
+} 
+// If we give the value as true then it make the lock realse mechanism as fair which means the the thread which was waiting for longer period of time will acquire the lock first. If false then it will behave as normal any thread can get the lock we cant say for sure that the thread that is waiting for longer period of time will get the lock.
+// So by not passing any argument or passing false as an argument the behaviour will be same.
+
+############################
+❄️ ReadWriteLock interface 
+############################
+➤ It is present in java.util.concurrent.locks it contains two methods 
+1. readLock() : 
+=> It returns the lock for reading 
+
+2. writeLock() :
+=> It returns the lock for writing.
