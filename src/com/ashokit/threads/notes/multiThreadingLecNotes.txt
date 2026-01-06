@@ -477,4 +477,37 @@ public ReentrantLock(boolean fair){
 => It returns the lock for reading 
 
 2. writeLock() :
-=> It returns the lock for writing.
+=> It returns the lock for writing. 
+
+➤ The ReentrantReadWriteLock class provides the implementation for this interface.
+
+➤ Suppose we have Bank class with some methods  checkBalanceUsingUPI ,checkBalanceUsingMobileApp, checkBalanceUsingNetBanking so these three method can be executed together means we can check balance using all three at the same time so here we will use readLock() to acquire this will allow all three to acquire lock
+➤ And we have deposit and witdraw methods here read and write both operations will take place so here we will acquire writeLock() this will allow only one of the method to acquire the lock other method will 
+
+// Implementation of writeLock() 
+----------------------------------
+ReentrantReadWriteLock l = new ReentrantReadWriteLock();
+void withDraw(double withdrawAmt){
+	l.writeLock().lock();
+	amount = amount - withdrawAmt;
+	l.writeLock().unlock();
+}
+
+// Implementation of readLock()
+---------------------------------
+ReentrantReadWriteLock l = new ReentrantReadWriteLock();
+void balanceInquiryFromUPI(){
+	l.readLock().lock();
+	System.out.println("Balance is "+amount);
+	l.readLock().unlock();
+}
+
+👉 Advantage
+=============== 
+➤ So whenever multiple threads are executing the read operation then they can do it at the same time.
+➤ But when they are executing the performing the write operation then they will not execute the same time one thread will acquire the lock and other threads will wait for the lock to be released.
+
+👉 Disadvantage of lock 
+=========================
+➤ The disadvantage of lock is that locking and unlocking is in developers hand so there is a chance that they might forget to unlock the lock or due to some exception the unlock doesnt happens  which will make the lock for infinite time. 
+➤ So it is better to write unlock inside the finally because everything written inside this block will get executed everytime even if the execution occurs then also.

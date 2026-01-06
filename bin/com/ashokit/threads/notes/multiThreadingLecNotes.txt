@@ -113,3 +113,368 @@ t.getName(); // will give the name of the thread.
 
 => We can also do it like this 
 System.out.println(Thread.currentThread().getName());
+
+####################
+❄️ Synchronization
+####################
+👉 What is the need for Synchronization in our application ?
+**************************************************************
+➤ Suppose there is a Bank class and we have an object of a Bank class now same object is performing withdraw and deposite at the same time this will cause the inconsistency in our data 
+Eg: If we have 7k present in our bank and we withdraw 3k and deposit 5k at the same time then there is a chance that we either get the update balance as 4k after withdrawal or 12k after deposit which is wrong the correct balance should be 8k so to achieve this we need to make sure that first one of the transcation is completed then only other transaction takes place and to achieve this we need the synchronization .
+
+➤ We can make a method synchronized by using keyword synchronized .
+➤ When we want to make some work inside a method synchronized then we will use synchronized block .
+
+#################
+❄️ Object Lock 
+#################
+➤ Suppose T1 thread is executing a synchronized method m1() using object a of class A and T2 thread is trying to execute the method m2() using same object a of class A so it wont be able to execute m2() because the object a is already executing the m1() so it has acquired objectLocka so it wont be able to execute another method .
+➤ But if we create another object b then we will be able to execute the m2() because it has not acquired object lock so when it will execute m2() then it will acquire objectLockb.
+
+➤ If methods were not synchronized then we can execute both method using the same object at the same time.
+➤ So when we have instance method then object lock is acquired . Using object lock we make the instance data as Thread safe. 
+
+➤ It is mechanism when we want to synchronize the non-static method or non static code block such that only one thread will be able to execute the code block on the given instance of the class 
+➤ In object lock if one thread acquires the lock on object then any other thread cant access any other synchronized methods on the same object but they can access non synchronized methods. 
+➤ So the synchronized methods in object lock are instance methods 
+➤ If the threads are working on different object of a class then lock acquires on different objects 
+
+#################
+❄️ Class Lock 
+#################
+➤ Whereas if we want to make the class level data means static methods thread safe then we should go for class lock 
+➤ In the above example if the synchronized methods are static methods then we don't need the object to call the static methods.
+➤ When synchronized methods are static methods , then the lock that acquires is class lock.
+➤ In class lock if one thread acquires the lock on class reference then any other thread cant access any other synchronized static methods on the same class reference until the first lock is released but they can access non synchronized static methods.
+
+######################################
+❄️ Difference between sleep and wait 
+######################################
+## sleep()
+------------
+➤ sleep() method is present in the thread class and it is a native static method.
+Thread.sleep(10000);
+➤ Whenever you are doing some transaction and some other resources are not responding then we use sleep() 
+➤ This is a static method present in Thread class 
+➤ Sleep accespts milli sec. Thread will sleep for specified time and after that starts the execution if system resource is not  busy. Whenever a thread is sleeping it will go to the runnable pool.
+➤ Sleep doesn't release the lock .
+➤ Sleep can be used with or without synchronized block.
+➤ THread is used to pause the thread exection for some time 
+
+## wait()
+----------
+➤ This is instance method present in Object class
+➤ Thread will be in waiting status unless untill notify or notify all is called 
+➤ Wait will release the lock 
+➤ Wait can be used only with synchronized block . If used in non synchronized block then it throws illegal monitor state exception.
+➤ Wait and notify or notify all are used for inter thread communication.
+
+## notify() / notifyAll() 
+--------------------------
+➤ Using this method we let the thread that went to wait know that now you can execute if we dont notify then it will end up waiting for infinite number of time.
+➤ So basically one thread has to talk to the other thread in order to tell it to come back to the execution and this is called as inter thread communication.
+➤ notify() will notify only the single thread where as notifyAll() will notify all the threads that are waiting for that object.
+➤ So what it means is suppose there is a kartik object which has 3 threads and 2 threads enter waiting mode and there is another object abc which entered waiting mode now a thread which is using kartik object calls notifyAll() so this method will notify to all the kartik objects not the abc object.
+➤ Similarly when we use notify() then any one thread that is working on the same object will return back to the execution.
+
+#################################################################################################
+❄️ Why wait() notify() and notifyAll() is present in the Object class not in the Thread class ?
+#################################################################################################
+➤ Because they are used to control the behavior of threads that are accessing objects.
+➤ In java threads execute code in the context of an object. When a thread accesses an object, it may need to wait for another thread to release the object's lock. This is where the wait(), notify() and notifyAll() methods come into play. 
+➤ The wait(), notify() and notifyAll() methods allow threads to communicate and synchronize with each other when accessing shared objects. When a thread calls the wait() on an object, it releases the object's lock  and waits until another thread notifies it. When a thread calls the notify() method on an object, it wakes up one of the threads that are waiting on that objects monitor . When a thread calls the notifyAll() method on an object it wakes up all the threads that are waiting on that object's monitor. 
+➤ Since the wait(), notify() and notifyAll() methods are used to control the behaviour of thread that are accessing objects, it makes sense to include these methods in the object class rather than the thread class. This way these methods can be used with any object that needs to be accessed by multiple threads, regardless of whether those threads are executing in the context of the same or different threads.
+
+###################################
+❄️ What is drawback of Threads ? 
+###################################
+➤ The drawback of a thread is that once a thread is dead we cant reuse that thread and in order to overcome this drawback of the threads we will use thread pool .
+
+################
+❄️ Thread Pool 
+################
+➤ It is mainly for re purpose of threads which are already created because on normal thread if you call start after completion on run method system throws illegal state exception. 
+➤ In order to overcome the drawback of the thread the thread pool come in the java 1.5 
+➤ Executor framework is used to configure the thread pool. 
+➤ There are 4 thread pools : 
+1. Single Thread Pool : Only one thread will be created in this and it will complete all the task 
+
+2. Cached Thread Pool : You dont need to tell anything the schedular will start the thread if the thread is busy it will create one more thread like this it will keep on doing to complete the given task.
+➤ So if threads are free then it will reuse the thread but if they are busy it will create a new thread.
+
+3. Scheduled Thread Pool : It is a fixed thread pool but we can provide some delay.
+➤ It is also a type of a fixed thread pool but the only change is that you can schedule some fixed time.
+➤ We use ScheduledTheadPool when we want to start a process after a certain time .
+Ex: String s = display();
+List<ScheduledFuture<Object>> l = new ArrayList();
+ScheduledExecutorService ex1 = Executors.newScheduledThreadPool(2);
+for(int i=0; i<customerList.Size(); i++){
+	TriggerEmailForPolicy t = new TriggerEmailForPolicy(customeList.get(i));
+	ScheduledFuture<Object> tx = ex1.schedule(t, 2, TimeUnit.MINUTES);
+	l.add(tx);
+}
+// So for above code two threads will be created and every thread will take 2 min after its created to execute.
+
+➤ So here the schedule() will create the delay and then start the execution.
+➤ In this schedule() method is responsible for creating the independent path of execution.
+➤ Thread will be created but the execution of thread will start after the 2 min for above code 
+
+👉 When we use schedule(t,2,TimeUnit.MINUTES;) then 
+➤ So what is happening is after completion of the work T1 will wait for 2 min and then it will take another work from the queue like this delay is working.
+
+👉 When we use scheduleAtFixedRate(t, 2, 10, TimeUnit.MINUTES);
+➤ So here what will happen is for the first time the thread will execute after the 2min then from the second time onwards it will take 2 + 10 = 12min to start the execution.
+
+➤ The return type of all the schedule() method is ScheduledFuture.
+
+🌟 Now to reuse the data that we have got from the run() 
+----------------------------------------------------------
+for(int i=0; i<l.size(); i++){
+	ScheduledFuture<Object> ob = l.get(i);
+	// ob.isDone(); //this method will give us the result as true if the thread execution has been done successfully else it will give false 
+	// So we will check first for each ob that the exection is done or not then only we will use get() 
+	if(l.get(i).isDone()){
+		try{
+			System.out.println(l.get(i).get());
+		}catch(InterruptedException | ExecutionException e){
+			e.printStackTrace();
+
+		}
+	}
+}
+
+4. Fixed Thread Pool : Based on our CPU a formula is used to find the max no of thread that we can create using thread pool 
+maxPoolSize = processorCount * desiredThreadPool(Utilization) + overheadThreadCount. 
+➤ So in this we provide fixed no of thread lets say 4 then we will complete the give task using this 4 threads only.
+Ex: ExecutorService ex = Executors.newFixedThreadPool(3); //This will create fixed thread pool of 3 threads. 
+//ExecutorService is an interface....
+➤ Whenever you use ExecutorService submit() or execute() method is responsible for creating the independent path of execution.
+➤ Internally the thread pool uses the queue concept.
+Example: 
+--------
+public class MultiThreadingForInsurance {
+
+	public static void main(String[] args) {
+		Customer c = new Customer("Kartik", "PL1234", 100000.00);
+		Customer c1 = new Customer("Harish", "PL1252", 50000.00);
+		Customer c2= new Customer("Ram", "PL1265", 200000.00);
+		Customer c3 = new Customer("Raju", "PL1276", 30000.00);
+		Customer c4 = new Customer("Ravi", "PL1223", 60000.00);
+		Customer c5 = new Customer("Pintu", "PL1298", 300000.00);
+		Customer c6 = new Customer("Tiklup", "PL1243", 500000.00);
+		Customer c7 = new Customer("Tilak ", "PL1209", 110000.00);
+		
+		List<Customer> customerList = new ArrayList<>();
+		customerList.add(c);
+		customerList.add(c1);
+		customerList.add(c2);
+		customerList.add(c3);
+		customerList.add(c4);
+		customerList.add(c5);
+		customerList.add(c6);
+		customerList.add(c7);
+		
+		ExecutorService ex = Executors.newFixedThreadPool(3);
+		
+		for(int i=0; i<customerList.size(); i++) {
+			ex.execute(new TriggerEmailForPolicy(customerList.get(i)));
+			
+		}
+		// Since the thread pool uses queue so threads will be assigned to the customer objects in a FIFO manner.
+		
+		// So here if we fetch data like this then it will take 10hrs let us suppose 
+		// So we will use thread pool here with 4 threads so time will reduce to 2.5 because all the threads are running parallel
+
+	}
+	
+	public static void triggerEmail() {
+		 
+	}
+}
+➤ So here execute method will create an independent path of execution. 
+
+➤ So here the first thread after the execution of the run() method it will take the task from the queue.
+➤ It will complete the task and then remove it from the queue each time after completing the task the thread will check the queue.size() if it is 0 then the thread will understand that all the task are completed.
+➤ So here even after the completion of the program the thread is alive that is how it is managing to reuse the thread because once the thread is dead then we cant reuse it , it will give us illegal thread state exception.
+➤ So we need to shutdown the thread before the execution of the program is completed so we will do 
+ex.shutdown()
+➤ So in order to kill the thread we need to call the shutdown() method.
+
+➤ Internally it is using the LinkedBlockingQueue
+➤ All the objects will go to the queue and wait for there turn when the execution of an object is completed then the thread will move to the next object.
+
+################################################
+❄️ Drawback of the run() of Runnable Interface 
+################################################
+➤ The drawback of the run() is that we cant return anything from the run() method because its return type is void  in the runnable interface.
+➤ So we can say that the drawback of the Runnable interface is that whenever we are using run() we cant return anything from that run() method.
+➤ But if you want to return something from the run() then you should Implement Callable interface 
+➤ Callable inteface takes generic in which we can pass the return type that we want. It has an abstract method call() whose return type is the same as the type that we give to our callable interface.
+➤ So instead of impelementing Runnable Interface we will implement Callable Interface whenever we want to return something from run().
+➤ With callable Interface we need to use ex.submit() it takes callable object but ex.execute() takes runnable object.
+➤ submit() in the Executor framework can take both Runnable and Callable object whereas execute() can take only Runnable object.
+
+#####################
+❄️ Future Interface 
+#####################
+➤ In order to accept some data or object that comes in future whenever we do multithreading programming this interface is used.
+➤ Basically it is a placeholder that is use to capture or store the object that is coming in future.
+➤ So when we implement Callable interface then the call method will return some value after the thread is executed so to hold this method we need to store it in the the Future interface reference variable 
+➤ Because as the thread is keep on executing the task of the queue one by one we dont know which of value is for which task so to store this we need to use the Future interface.
+
+Ex: 
+String s = display();
+ExecutorService ex = Executors.newFixedThreadPool(3);
+List l = new ArrayList();
+for(int i=0; i<customerList.size(); i++){
+	TriggerEmailForPolicy t = new TriggerEmailForPolicy();
+	Future<Object> obj = ex.submit(t);
+	l.add(obj);
+}
+
+########################################################
+❄️ How can we set the name in the Executor Framework ?
+########################################################
+➤ So we will pass the second parameter to the constructor of the Executors.newFixedThreadPool(0,)
+// The second argument is a ThreadFactory interface so we have to implement it and using this we will be able to give name to our threads.
+
+Ex: ExecutorService ex = Executors. newFixedThreadPool(2, new ThreadFactory(){
+	int counter = 0;
+	@Override 
+	public Thread newThread(Runnable r){
+		Thread t = new Thread(r);
+		t.setName("Thread"+counter++);
+		return t;
+	}
+});
+
+➤ So here instead of implementing the interface separately we have created an anonymous class and there we have overriden the method of the ThreadFactory interface. 
+
+##################################################################################
+❄️  What is the difference between synchronized method and synchronized block ?
+##################################################################################
+➤ In synchronized method once the lock is acquired then it will be release only after the execution of that method.
+➤ In synchronized block the lock is acquire within the method an synchronized block is created and it can be released before the execution of the entire method.
+
+Example: 
+	synchronized void display(SynchronizedExample d) {
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+	}
+	// When display method will start executing it will acquire the lock then no other thread will be able to execute display method 
+	// They will enter into the waiting mode.
+	
+	void display1(SynchronizedExample d) {
+		System.out.println("hi 1");
+	 	System.out.println("hi 2");
+	 	synchronized(d) {
+	 		System.out.println("hi3");
+	 		System.out.println("hi4");
+	 	}
+	}
+	// Here other thread can also start executing the display1() and they can execute the upper two lines then they have to wait for the lock to be release.
+
+👉 How to override the run() method of the Runnable interface using lambda?
+➤ So we can write the implemetation of the unimplemented method of an interface using lambdas we can do this for the interface with only one abstract method.
+➤ So we will create the reference variable of the interface and then we will implement the unimplemented method like give below.
+Ex: Runnable l1 = () -> {
+	s.display(s);
+}
+
+➤ We can also create thread object like this : 
+Thread t = new Thread(() -> s.display(s)); 
+
+🌟 Drawback of synchronized 
+*****************************
+➤ So suppose there are three threads T1 T2 and T3 , thread T1 has acquired the lock now both thread T2 and T3 will go into the waiting mode so now we suppose T2 is waiting for longer period of time so it should get the lock firt but we can say that for sure that it will get to acquire the lock first and execute run(). This is one of the drawback of threads . 
+➤ So basically there are two types of lock 
+1. Fair Lock : In this the thread that has been waiting for a longer period of time will acquire the lock first .
+
+2. Unfair Lock : In this we cant say that the thread that is waiting for longer period will get the lock first it may get or it might not get the lock for the longer period of time.
+
+➤ Let us take a scenario when we enter the display() it will acquire the lock and we want it to release the lock when we enter the display1() and when we execute the second line hi 2 is printed we want to relase the lock can this happen using the synchronized keyword ?
+
+synchronized void display(SynchronizedExample d) {
+	//Lock is acquired here 
+		display1(s);
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+	}
+	
+	void display1(SynchronizedExample d) {
+		System.out.println("hi 1");
+	 	System.out.println("hi 2");
+		//We want it to release the lock here.
+	 	synchronized(d) {
+	 		System.out.println("hi3");
+	 		System.out.println("hi4");
+	 	}
+	}
+➤ So no this is not possible using the synchronized keyword because synchronized keyword can be used to a method or within the method. We cant use synchronized keyword across the method.
+➤ So this is also one of the drawback
+
+👉 So in order to overcome this we will go for a Lock .
+
+###################
+❄️ Lock Interface 
+###################
+➤ In java we have a Lock interface present in java.util.concurrent.locks package. It has a lock() using which it will acquire the lock. And there is also an unlock() method which is used to relase the lock. 
+➤ To use this lock interface we need to provide the implementation for these two methods but we dont know the how to implement these two methods
+➤ So in java under the lock mechanism there is a class ReentrantLock .
+➤ So for Lock interface ReentrantLock class and ReentrantReadWriteLock provides the implementation for its unimplemented methods.
+➤ Whenever you want to use Lock interface create its object like this
+Lock l = new ReentrantLock();
+Lock l1 = new ReentrantReadWriteLock(); 
+
+Example: 
+synchronized void display(LockExample1 d) {
+		//CreateLock
+		l.lock();
+		System.out.println("Hi1");
+		System.out.println("Hi2");
+		System.out.println("Hi3");
+		System.out.println("Hi4");
+		l.unlock();
+	}
+
+	public static void main(String[] args) {
+		LockExample1 l1= new LockExample1();
+		Thread t = new Thread(()-> l1.display(l1));
+		Thread t1 = new Thread(()-> l1.display(l1));
+		Thread t2= new Thread(()-> l1.display(l1));
+		Thread t3 = new Thread(()-> l1.display(l1));
+		
+		t.start();
+		t1.start();
+		t2.start();
+		t3.start();
+		
+	}
+➤ It will behave the same when one thread will acquire the lock the other threads have to wait.
+➤ Here by using this lock interface we can make some changes in our Reentrant class lock method to make sure that the thread which is waiting for longer period of time gets the lock first . So this solves one of the problem or drawback of the synchronized keyword.
+➤ So based on the waiting time of the thread we want to do acquire the lock. 
+➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlocck()
+➤ Using lock we are able to achieve or solve both the problems that we were facing in the synchronized block or method.
+
+👉 How we can do this?
+========================= 
+➤ We will pass true as an argument to the ReentrantLock it has a constructor. 
+public ReentrantLock(boolean fair){
+	sync = fair ? new FairSync() : new NonFairSync();
+} 
+// If we give the value as true then it make the lock realse mechanism as fair which means the the thread which was waiting for longer period of time will acquire the lock first. If false then it will behave as normal any thread can get the lock we cant say for sure that the thread that is waiting for longer period of time will get the lock.
+// So by not passing any argument or passing false as an argument the behaviour will be same.
+
+############################
+❄️ ReadWriteLock interface 
+############################
+➤ It is present in java.util.concurrent.locks it contains two methods 
+1. readLock() : 
+=> It returns the lock for reading 
+
+2. writeLock() :
+=> It returns the lock for writing. 
