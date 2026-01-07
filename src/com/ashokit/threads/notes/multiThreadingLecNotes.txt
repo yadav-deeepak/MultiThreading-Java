@@ -511,3 +511,33 @@ void balanceInquiryFromUPI(){
 =========================
 ➤ The disadvantage of lock is that locking and unlocking is in developers hand so there is a chance that they might forget to unlock the lock or due to some exception the unlock doesnt happens  which will make the lock for infinite time. 
 ➤ So it is better to write unlock inside the finally because everything written inside this block will get executed everytime even if the execution occurs then also.
+
+##############
+❄️ Volatile 
+##############
+➤ As we know that each thread have independent path of execution and they cant see what the other thread is doing the problem here is suppose both the threads are performing some operation and updating the value of a same variable so both needs to know what is the updated value 
+➤ If they dont then there will be inconsistency in the data. 
+Eg: 
+int i = 5;
+T1 thread 
+i = i+10; 
+
+T2 thread 
+i = i+20;
+
+➤ So here both are perfoming some operation on the same variable if this is a scenario we can do it by making it synchronized but when we have multiple threads then what happen
+➤ So there is a thread cache memory for each of the thread both threads will have thread cache but both threads cant see the data of each other 
+➤ So when we want the data of a variable to be accessed but other threads then we make that variable as volatile 
+Eg: volatile int i = 5;
+
+➤ Volatile is the keyword and it is used only on the global variable.
+When we make a variable volatile then it is immediately pushed form thread cache to main memory so now the other thread can access the updated data. 
+
+#######################################################
+❄️ What is difference between volatile and transient?
+#######################################################
+➤ Volatile is realted to the threads concept where as transient is related to the serialization concept.
+
+➤ So in serialization we spilt the data into bytes and send it over a network and then when data is received it is deserialized 
+➤ So suppose that there is some data lets say password that we dont waana deserialize then we add transient keyword in front of that variable 
+➤ So whenever we add transient keyword in front of the variable then that variable wont be serialized.
