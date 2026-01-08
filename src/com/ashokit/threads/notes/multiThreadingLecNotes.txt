@@ -537,6 +537,7 @@ When we make a variable volatile then it is immediately pushed form thread cache
 ❄️ What is difference between volatile and transient?
 #######################################################
 ➤ Volatile is realted to the threads concept where as transient is related to the serialization concept.
+➤ Volatile keyword is used when we want to make a variable data accessible to all the threads it means as soon as the data of the variable is upated it is immediately pushed from the thread cache to main memory so that other thread can access the updated data.
 
 ➤ So in serialization we spilt the data into bytes and send it over a network and then when data is received it is deserialized 
 ➤ So suppose that there is some data lets say password that we dont waana deserialize then we add transient keyword in front of that variable 
