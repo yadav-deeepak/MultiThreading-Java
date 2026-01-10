@@ -542,3 +542,8 @@ When we make a variable volatile then it is immediately pushed form thread cache
 ➤ So in serialization we spilt the data into bytes and send it over a network and then when data is received it is deserialized 
 ➤ So suppose that there is some data lets say password that we dont waana deserialize then we add transient keyword in front of that variable 
 ➤ So whenever we add transient keyword in front of the variable then that variable wont be serialized.
+
+##########################
+❄️ What is a Deadlock ?
+##########################
+➤ When each thread is waiting for other thread to release the lock then deadlock occurs. 
