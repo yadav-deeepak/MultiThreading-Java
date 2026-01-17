@@ -482,7 +482,7 @@ public ReentrantLock(boolean fair){
 ➤ The ReentrantReadWriteLock class provides the implementation for this interface.
 
 ➤ Suppose we have Bank class with some methods  checkBalanceUsingUPI ,checkBalanceUsingMobileApp, checkBalanceUsingNetBanking so these three method can be executed together means we can check balance using all three at the same time so here we will use readLock() to acquire this will allow all three to acquire lock
-➤ And we have deposit and witdraw methods here read and write both operations will take place so here we will acquire writeLock() this will allow only one of the method to acquire the lock other method will 
+➤ And we have deposit and witdraw methods here read and write both operations will take place so here we will acquire writeLock() this will allow only one of the thread to acquire the lock other thread will wait to acquire the lock till the lock is rlease.  
 
 // Implementation of writeLock() 
 ----------------------------------
