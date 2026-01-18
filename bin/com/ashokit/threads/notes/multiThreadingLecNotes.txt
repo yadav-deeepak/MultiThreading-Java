@@ -457,7 +457,7 @@ synchronized void display(LockExample1 d) {
 ➤ It will behave the same when one thread will acquire the lock the other threads have to wait.
 ➤ Here by using this lock interface we can make some changes in our Reentrant class lock method to make sure that the thread which is waiting for longer period of time gets the lock first . So this solves one of the problem or drawback of the synchronized keyword.
 ➤ So based on the waiting time of the thread we want to do acquire the lock. 
-➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlocck()
+➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlock()
 ➤ Using lock we are able to achieve or solve both the problems that we were facing in the synchronized block or method.
 
 👉 How we can do this?
@@ -478,3 +478,72 @@ public ReentrantLock(boolean fair){
 
 2. writeLock() :
 => It returns the lock for writing. 
+
+➤ The ReentrantReadWriteLock class provides the implementation for this interface.
+
+➤ Suppose we have Bank class with some methods  checkBalanceUsingUPI ,checkBalanceUsingMobileApp, checkBalanceUsingNetBanking so these three method can be executed together means we can check balance using all three at the same time so here we will use readLock() to acquire this will allow all three to acquire lock
+➤ And we have deposit and witdraw methods here read and write both operations will take place so here we will acquire writeLock() this will allow only one of the thread to acquire the lock other thread will wait to acquire the lock till the lock is rlease.  
+
+// Implementation of writeLock() 
+----------------------------------
+ReentrantReadWriteLock l = new ReentrantReadWriteLock();
+void withDraw(double withdrawAmt){
+	l.writeLock().lock();
+	amount = amount - withdrawAmt;
+	l.writeLock().unlock();
+}
+
+// Implementation of readLock()
+---------------------------------
+ReentrantReadWriteLock l = new ReentrantReadWriteLock();
+void balanceInquiryFromUPI(){
+	l.readLock().lock();
+	System.out.println("Balance is "+amount);
+	l.readLock().unlock();
+}
+
+👉 Advantage
+=============== 
+➤ So whenever multiple threads are executing the read operation then they can do it at the same time.
+➤ But when they are executing the performing the write operation then they will not execute the same time one thread will acquire the lock and other threads will wait for the lock to be released.
+
+👉 Disadvantage of lock 
+=========================
+➤ The disadvantage of lock is that locking and unlocking is in developers hand so there is a chance that they might forget to unlock the lock or due to some exception the unlock doesnt happens  which will make the lock for infinite time. 
+➤ So it is better to write unlock inside the finally because everything written inside this block will get executed everytime even if the execution occurs then also.
+
+##############
+❄️ Volatile 
+##############
+➤ As we know that each thread have independent path of execution and they cant see what the other thread is doing the problem here is suppose both the threads are performing some operation and updating the value of a same variable so both needs to know what is the updated value 
+➤ If they dont then there will be inconsistency in the data. 
+Eg: 
+int i = 5;
+T1 thread 
+i = i+10; 
+
+T2 thread 
+i = i+20;
+
+➤ So here both are perfoming some operation on the same variable if this is a scenario we can do it by making it synchronized but when we have multiple threads then what happen
+➤ So there is a thread cache memory for each of the thread both threads will have thread cache but both threads cant see the data of each other 
+➤ So when we want the data of a variable to be accessed but other threads then we make that variable as volatile 
+Eg: volatile int i = 5;
+
+➤ Volatile is the keyword and it is used only on the global variable.
+When we make a variable volatile then it is immediately pushed form thread cache to main memory so now the other thread can access the updated data. 
+
+#######################################################
+❄️ What is difference between volatile and transient?
+#######################################################
+➤ Volatile is realted to the threads concept where as transient is related to the serialization concept.
+➤ Volatile keyword is used when we want to make a variable data accessible to all the threads it means as soon as the data of the variable is upated it is immediately pushed from the thread cache to main memory so that other thread can access the updated data.
+
+➤ So in serialization we spilt the data into bytes and send it over a network and then when data is received it is deserialized 
+➤ So suppose that there is some data lets say password that we dont waana deserialize then we add transient keyword in front of that variable 
+➤ So whenever we add transient keyword in front of the variable then that variable wont be serialized.
+
+##########################
+❄️ What is a Deadlock ?
+##########################
+➤ When each thread is waiting for other thread to release the lock then deadlock occurs. 

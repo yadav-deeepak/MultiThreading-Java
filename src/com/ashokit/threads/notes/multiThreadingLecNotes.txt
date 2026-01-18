@@ -457,8 +457,20 @@ synchronized void display(LockExample1 d) {
 ➤ It will behave the same when one thread will acquire the lock the other threads have to wait.
 ➤ Here by using this lock interface we can make some changes in our Reentrant class lock method to make sure that the thread which is waiting for longer period of time gets the lock first . So this solves one of the problem or drawback of the synchronized keyword.
 ➤ So based on the waiting time of the thread we want to do acquire the lock. 
-➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlocck()
+➤ We can also acquire the lock in one method and then release it in another method using this lock() and unlock()
 ➤ Using lock we are able to achieve or solve both the problems that we were facing in the synchronized block or method.
+➤ If we forget to unlock then the lock will stay on forever suppose an exception occured during lock so lock will not be relased , so to avoid these kind of scenarios we write unlock() inside the finally block.
+Eg: 
+lock.writeLock().lock();
+try{
+	if(balance >= amount){
+		balance -= amount;
+	}else{
+		throw new IllegalArgumentException("Mssg here");
+	}
+}finally {
+	lock.writeLock().unlock();
+}
 
 👉 How we can do this?
 ========================= 
@@ -547,3 +559,37 @@ When we make a variable volatile then it is immediately pushed form thread cache
 ❄️ What is a Deadlock ?
 ##########################
 ➤ When each thread is waiting for other thread to release the lock then deadlock occurs. 
+
+🌬️ Ways to avoid deadlock 
+***************************
+👉 By keeping the order of acquiring the lock same 
+----------------------------------------------------
+➤ If the order or acquiring the lock is same then it wont be a problem deadlock wont occur but if the order is different then the deadlock might occur. This is one of the way of avoiding deadlock.
+➤ When we use synchronized keyword then we cant tell for sure if the lock is acquired or it is free so if it is already acquired then the thread will go on to the wait mode .
+
+👉 Using trylock() 
+--------------------
+➤ tryLock() method will first check if the lock is available then only it will acquire the lock else it will not acquire the lock.
+➤ But using lock() we can check if the lock is already acquired or not. 
+➤ Using tryLock() method present in the lock interface it will return true if the lock is available if it is not available then it will return false .
+Eg: l.lock(); //lock acquried
+if(l.tryLock()){ //returns false
+
+}
+else{
+
+}
+// For the above case since the lock is already acquired so it will execute the else part.
+➤ It will acquire the lock if it is free so when ever tryLock() method returns true it means that the lock is acquried
+
+👉 Using semaphore 
+---------------------
+➤ Whenever you want to restrict the access for the the shared resource then we will go for semaphore.
+➤ The semaphore class has a constructor which takes permits as agrument what this permits is we provide the value to this and this will allow that many threads to  will be able to execute the shared resource .
+➤ In the semaphore class semaphore.acquire() will acquire the lock and semaphore.release() will release the lock.
+Eg: 
+private static Semaphore semaphore = new Semaphore(2);
+// Will allow two threads to execute the shared resource.
+
+➤ Semaphore in java is a synchronization mechanism that allows a fixed number of threads to access a shared resource at the same time. It maintains a count of the number of permits available and each thread that wants to access the shared resouce must acquire a permit from the semaphore. If no permits are available the thread will block until a permit becomes available. 
+➤ So using semaphore though the threads are working on the different object we can still control how many thread we want to access shared resource at a time. 
