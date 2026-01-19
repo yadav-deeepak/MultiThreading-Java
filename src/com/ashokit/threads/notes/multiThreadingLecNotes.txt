@@ -589,7 +589,106 @@ else{
 ➤ In the semaphore class semaphore.acquire() will acquire the lock and semaphore.release() will release the lock.
 Eg: 
 private static Semaphore semaphore = new Semaphore(2);
+public void run(){
+	try{
+		System.out.println("Thread "+id+" is waiting for a permit.");
+		semaphore.acquire();
+		System.out.println("Thread "+id+" has acquired the permit.");
+		Thread.sleep(10000);
+		semaphore.release();
+		System.out.println("Thread "+id+" has released a permit");
+	}
+}
 // Will allow two threads to execute the shared resource.
 
 ➤ Semaphore in java is a synchronization mechanism that allows a fixed number of threads to access a shared resource at the same time. It maintains a count of the number of permits available and each thread that wants to access the shared resouce must acquire a permit from the semaphore. If no permits are available the thread will block until a permit becomes available. 
 ➤ So using semaphore though the threads are working on the different object we can still control how many thread we want to access shared resource at a time. 
+
+###################
+❄️ join() method 
+###################
+➤ When two threads are running parallely and we want one thread to execute fully first and then the other thread should execute thats where the join method comes into picture. 
+Eg: public static void main(String[] args) {
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				System.out.println("Run method executed");
+			}
+			
+		});
+		t.start();
+		t.join();
+		System.out.println("Hiii");
+		System.out.println("Hello");
+	}
+// Here in above example main thread and thread t are running parallely and we want t thread to execute first then main thread shoudl execute . 
+// When we give t.join() then the parent of thread t that is main thread will wait untill the thread t is executed.
+➤ So until the t thread is executed the main thread will go onto the wait mode. It will come into the execution when the run method is executed fully by the thread t.
+
+➤ Suppose there are two processes p1 and p2 and p2 is dependent on p1 so p1 needs to finish first then only p2 can execute here we cant do multithreading otherwise we will get the wrong answers so wherever there is a dependency like this then we will use join() method we will write p1.join() then we will write the code for p2 this will make sure that first the p1 process is executed and then the p2 process will execute 
+
+➤ The above example will wait for single thread to complete but in case of multithreading we use executors framework there we want multiple threads to wait in this case what will we do??
+
+☃️ For multiple threads (Executors Framework)
+-----------------------------------------------
+➤ public static void main(String[] args) {
+		ExecutorService ex = Executors.newFixedThreadPool(3);
+		
+		for(int i=0; i<10; i++) {
+			ex.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					System.out.println("Hi "+Thread.currentThread());
+				}
+				
+			});
+		}
+	}
+➤ Here using the three threads we are performing 10 tasks so we want main thread to execute after all these threads are executed so here we cant use the join() this is one of the drawback of the join() method 
+➤ We cant use join() method for multiple thread execution.
+➤ So there is a class called CountDownLatch using this we can solve this problem 
+Eg: 
+static CountDownLatch c = new CountDownLatch(10);
+	public static void main(String[] args) throws InterruptedException {
+		ExecutorService ex = Executors.newFixedThreadPool(3);
+		
+		for(int i=0; i<10; i++) {
+			ex.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					System.out.println("Hi "+Thread.currentThread());
+					c.countDown();
+				}
+			});
+		}
+		c.await();
+		System.out.println("Hiii...");
+		System.out.println("Hellooo...");
+	} 
+➤ The await() method will know if the all the threads are completed or not based on the countdown if the countdown is 10 that means the threads have completed the task.
+➤ The await() method will wait till all the tasks are completed so this is how we will do it in multithreading. Now in above example the main thread will wait till all the threads are executed.
+➤ So CountDownLatch will make sure all the threads are executed before it executes the next task.
+
+##############
+❄️ Atomicity 
+##############
+➤ Atomicity is at any point of time only one thread will execute without having synchronized block or lock mechanism or semaphore.
+➤ In multithreading program it is possible for multiple threads to access and modify the same variable concurrently. When multiple threads modify a variable concurrently there is a possiblility of data races which can result in incorrect or unpredictable behaviour of the program.
+➤ To avoid the data races we need a way to ensure that a variable is accessed and modified atomically i.e; by a single thread at a time. This is where atomic variables come in . Atomic variables provide a way to modify a variable atomically without the need for locks or other synchronization mechanisms. 
+➤ An atomic variable is a variable that is updated atomically i.e in a way that ensures that no other thread can modify the variable at the same time. In java atomic variables are provided by the java.util.concurrent.atomic package. Some common examples of atomic variables are AtomicInteger and AtomicBoolean 
+➤ When we use synchronized block there is no issue to variables because one thread will work at a time on same object but when there is no synchronized block multiple threads can execute multiple methods on same object and the value of one variable is not visible to other thread. So in this scenario we can use atomic variable instead of normal variable that means atomic can be more effective when there is no synchronized or lock mechanism.
+➤ When we use a synchronized block only one thread can execute the block at a time which ensures that there are no data races on shared variables so if all accesses to shared variables are within synchronized blocks then we dont need to use atomic variables.
+
+#####################################################
+❄️ Difference between volatile and atomic variable 
+#####################################################
+➤ Volatile will solve the problem of visibility it will only let the other threads know the updated value but the problem that when two threads will execute the output will be different still exists 
+➤ This problem is solved by atomic variable.
+➤ Volatile and atomic variables both used in java for concurrent programming but they differ in how they provide thread safety
+➤ Volatile variables provide a way to ensure that the variable's value is always read from and written to main memory, rather than from a thread's local cache. This ensures that changes made to the variable by one thread are visible to all other threads immediately. However, volatile variables don't ensure atomicity, i.e they do not ensure that multiple threads accessing the variable do so atomically. If multiple threads modify a volatile variable concurrently there is still a risk of data races and other concurrency issues. 
+➤ On the other hand atomic variables provide a way to ensure that operations on the variable are atomic i.e; thread safe. They enusre that multiple threads can modify the variable concurrently without causing data races. Atomic variables are implemented using low level CPU instructions to ensure that the variable is accessed and modified atomically. 
+➤ They difference between volatile and atomic variables is that volatile variables provide visibility guarantees i.e; they ensure that changes made to the variable by one thread are immediately visible to other threads . Atomic cariables on the other hand provide both visibility and atomicity guarantees i.e; they ensure that operations on the variable are thread safe. 
