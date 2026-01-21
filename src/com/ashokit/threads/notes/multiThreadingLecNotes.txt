@@ -693,4 +693,43 @@ static CountDownLatch c = new CountDownLatch(10);
 ➤ On the other hand atomic variables provide a way to ensure that operations on the variable are atomic i.e; thread safe. They enusre that multiple threads can modify the variable concurrently without causing data races. Atomic variables are implemented using low level CPU instructions to ensure that the variable is accessed and modified atomically. 
 ➤ They difference between volatile and atomic variables is that volatile variables provide visibility guarantees i.e; they ensure that changes made to the variable by one thread are immediately visible to other threads . Atomic cariables on the other hand provide both visibility and atomicity guarantees i.e; they ensure that operations on the variable are thread safe.
 
-❄️ 
+❄️ What is a Daemon Thread ?
+➤ Background execution thread is a daemon thread.
+Eg: Garbage collector 
+psvm(String [] args){
+	DaemonThreadExample d = new DaemonThreadExample();
+	d = null;
+	System.gc(); //This will request java to run garbage collection 
+}
+➤ We dont run garbage collection objects in our program it is automatically done 
+➤ Whenever garbage collection is executing it will execute finalize method on that object that is eligible for garbage collection.
+
+➤ If you want to make a user defined thread as a daemon thread then we will do it like this  
+
+public class DaemonThreadEx extends Thread {
+	public static void main(String[] args){
+		DaemonThreadEx d = new DaemonThreadEx();
+		t.setDaemon(true);
+	}
+}
+
+// THIS WILL MAKE OUR USER DEFINED THREAD AS DAEMON THREAD USING setDaemon() method
+➤ setDaemon() : This method is to be called on user defined thread to make it as Background execution thread. 
+
+###########################################################
+❄️ What is a thread local variable and how does it work ?
+###########################################################
+➤ ThreadLocal is a class in java and that variable is common for the thread.
+➤ If we want to use a single variable throughout the exection of a thread then we can use the thread local variable.
+➤ It is nothing but a local variable for a thread 
+Ex: ThreadLocal<Integer> threadL = new ThreadLocal<>();
+
+@Override 
+public void run(){
+	threadL.set(10);
+	display();
+	System.out.println(threadL.get());
+	Integer i = threadL.get();
+	threadL.set(i+100);
+	System.out.println(threadL.get());
+}
