@@ -733,3 +733,125 @@ public void run(){
 	threadL.set(i+100);
 	System.out.println(threadL.get());
 }
+
+#########################################################################
+❄️ What is the difference between Optimistic Lock and Pessimistic Lock ?
+#########################################################################
+➤ This is not a class in java it is just a concept.
+
+🔐 Pessimistic Locking (Threading in Java)
+*********************************************
+➤ Idea:
+---------
+Assumes conflicts WILL happen
+👉 Lock the resource before using it so no other thread can access it.
+
+➤ How it works:
+-------------------
+👉 Thread acquires a lock
+👉 Other threads are blocked / wait
+👉 Lock is released after work is done
+
+➤ Java examples:
+------------------
+➤ synchronized keyword
+➤ ReentrantLock
+
+✅ Example
+synchronized void update() {
+    count++;
+}
+
+OR
+
+Lock lock = new ReentrantLock();
+lock.lock();
+try {
+    count++;
+} finally {
+    lock.unlock();
+}
+
+➤ Pros:
+*********
+👉 Data consistency guaranteed
+👉 Simple to understand
+👉 Good for high contention
+
+➤ Cons:
+*********
+👉 Thread blocking
+👉 Performance overhead
+👉 Risk of deadlock
+
+➤ Used when:
+**************
+👉 Many threads modify shared data
+👉 Conflicts are frequent
+
+🔓 Optimistic Locking (Threading in Java)
+********************************************
+➤ Idea:
+-----------
+Assumes conflicts are RARE
+👉 Do NOT lock first
+👉 Check before committing changes
+
+➤ How it works:
+-----------------
+👉 Thread reads data
+👉 Performs operation
+👉 Updates only if data has not changed
+👉 If changed → retry
+
+➤ Java examples:
+------------------
+➤ AtomicInteger, AtomicReference
+➤ CAS (Compare-And-Set)
+
+✅ Example
+AtomicInteger count = new AtomicInteger(0);
+
+count.incrementAndGet();
+
+CAS Example
+int expected = count.get();
+boolean success = count.compareAndSet(expected, expected + 1);
+
+➤ Pros:
+*********
+👉 No blocking
+👉 High performance
+👉 No deadlocks
+
+➤ Cons:
+*********
+👉 Retry overhead
+👉 Starvation possible
+👉 Complex logic
+
+➤ Used when:
+**************
+👉 Read-heavy systems
+👉 Low contention
+
+🆚 Optimistic vs Pessimistic Locking (Quick Comparison)
+*********************************************************
+#########################################################
+| Feature            | Pessimistic     | Optimistic     |
+| ------------------ | --------------- | -------------- |
+| Lock before access | ✅ Yes           | ❌ No        |
+| Blocking           | ✅ Yes           | ❌ No        |
+| Performance        | ❌ Slower        | ✅ Faster    |
+| Deadlock risk      | ⚠️ Yes          | ❌ No         |
+| Best for           | High contention | Low contention |
+#########################################################
+
+🎯 Interview One-Liner
+************************
+Pessimistic locking blocks other threads assuming conflicts, while
+Optimistic locking assumes no conflict and validates before updating.
+
+###############################################
+❄️ What is the fork/join framework in java ?
+###############################################
